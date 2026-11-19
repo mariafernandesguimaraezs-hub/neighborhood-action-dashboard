@@ -6,11 +6,18 @@ Global Solution FIAP 2026.2 – CitizenTech
 
 | Integrante | RM |
 |---|---|
-| [PREENCHER] | [PREENCHER] |
-| [PREENCHER] | [PREENCHER] |
-| [PREENCHER] | [PREENCHER] |
-| [PREENCHER] | [PREENCHER] |
-| [PREENCHER] | [PREENCHER] |
+| [Eduardo Henrique Campos da Silva
+] | [PREENCHER] |
+| [Julia de Oliveira Silva
+
+] | [PREENCHER] |
+| [Pedro Henrique Monteiro Scabio
+
+] | [PREENCHER] |
+| [Maria Eduarda Fernandes Guimaraes] | [PREENCHER] |
+| [Maria Fernanda Barbosa Firmo
+
+] | [PREENCHER] |
 
 **Vídeo de apresentação (YouTube, não listado):** [COLAR O LINK AQUI]
 
