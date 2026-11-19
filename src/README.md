@@ -4,11 +4,16 @@ Global Solution FIAP 2026.2 – CitizenTech
 
 **Equipe:** 
 
-Eduardo Henrique Campos da Silva - [PREENCHER RM]
-Julia de Oliveira Silva - [PREENCHER RM]
-Pedro Henrique Monteiro Scabio - [PREENCHER RM]
-Maria Eduarda Fernandes Guimaraes - [PREENCHER RM]
-Maria Fernanda Barbosa Firmo - [PREENCHER RM]
+Eduardo Henrique Campos da Silva - [RM576932]
+
+Julia de Oliveira Silva - [RM576345]
+
+Pedro Henrique Monteiro Scabio - [RM576607]
+
+Maria Eduarda Fernandes Guimaraes - [RM576947]
+
+Maria Fernanda Barbosa Firmo - [RM575160]
+
 
 ## 1. Bairro simulado, problema e público
 
