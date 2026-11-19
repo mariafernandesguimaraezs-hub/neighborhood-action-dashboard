@@ -2,24 +2,13 @@
 
 Global Solution FIAP 2026.2 – CitizenTech
 
-**Equipe:** [PREENCHER NOME DA EQUIPE]
+**Equipe:** 
 
-| Integrante | RM |
-|---|---|
-| [Eduardo Henrique Campos da Silva
-] | [PREENCHER] |
-| [Julia de Oliveira Silva
-
-] | [PREENCHER] |
-| [Pedro Henrique Monteiro Scabio
-
-] | [PREENCHER] |
-| [Maria Eduarda Fernandes Guimaraes] | [PREENCHER] |
-| [Maria Fernanda Barbosa Firmo
-
-] | [PREENCHER] |
-
-**Vídeo de apresentação (YouTube, não listado):** [COLAR O LINK AQUI]
+Eduardo Henrique Campos da Silva - [PREENCHER RM]
+Julia de Oliveira Silva - [PREENCHER RM]
+Pedro Henrique Monteiro Scabio - [PREENCHER RM]
+Maria Eduarda Fernandes Guimaraes - [PREENCHER RM]
+Maria Fernanda Barbosa Firmo - [PREENCHER RM]
 
 ## 1. Bairro simulado, problema e público
 
