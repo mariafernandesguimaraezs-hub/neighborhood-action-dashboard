@@ -1,160 +1,162 @@
 # Neighborhood Action Dashboard
 
-Global Solution FIAP 2026.2 – CitizenTech
+Global Solution 2 — Graduação ON em Ciência da Computação — FIAP 2026.2
 
-**Equipe:** 
+## Equipe
 
-Eduardo Henrique Campos da Silva - [RM576932]
+**Integrantes e RMs:**
 
-Julia de Oliveira Silva - [RM576345]
+- Eduardo Henrique Campos da Silva - RM576932
+- Julia de Oliveira Silva - RM576345
+- Pedro Henrique Monteiro Scabio - RM576607
+- Maria Eduarda Fernandes Guimaraes - RM576947
+- Maria Fernanda Barbosa Firmo - RM575160
 
-Pedro Henrique Monteiro Scabio - [RM576607]
+## Sobre o projeto
 
-Maria Eduarda Fernandes Guimaraes - [RM576947]
+O Neighborhood Action Dashboard é um programa de terminal que simula um painel comunitário de ocorrências. Ele permite cadastrar pedidos de melhoria em bairros, consultar o andamento, mudar o status e ver indicadores simples.
 
-Maria Fernanda Barbosa Firmo - [RM575160]
+O desafio da Global Solution é aplicar o que foi estudado nas fases 1, 2 e 3: lógica de programação, estruturas de dados e algoritmos, sem banco de dados, APIs ou serviços externos.
 
+## Objetivo
 
-## 1. Bairro simulado, problema e público
+Organizar as demandas de um bairro de forma clara, garantindo:
 
-Os dados são **fictícios**, sem nenhuma informação pessoal. Foram criados quatro bairros imaginários (Jardim Aurora, Vila Esperança, Parque Verde e Centro Novo) com 12 ocorrências de iluminação, acessibilidade, limpeza e conservação de espaços coletivos.
+- Cadastro de ocorrências com verificação dos campos obrigatórios;
+- Consulta por código e filtro por categoria e status;
+- Atualização de status com histórico das mudanças;
+- Indicadores simples e fáceis de entender;
+- Cuidado com acessibilidade, inclusão e privacidade.
 
-Problema: os relatos de melhoria do bairro ficam dispersos, as prioridades não ficam claras e os moradores não conseguem acompanhar a situação das solicitações. O protótipo organiza esses relatos em um painel de terminal.
+## Tecnologias utilizadas
 
-Público beneficiado: moradores que registram e acompanham demandas, e quem organiza a comunidade e precisa saber o que está pendente.
+- Python 3, usando só a biblioteca padrão (nada para instalar);
+- Interface de texto no terminal;
+- Dados inicializados no próprio código, sem banco de dados.
 
-## 2. Como executar
-
-Requisito: Python 3 (somente biblioteca padrão, sem instalar nada).
-
-```
-python src/sistema.py      # abre o menu interativo
-python src/dados.py        # carrega os dados e mostra o teste do registro inválido
-python src/indicadores.py  # mostra só o painel de indicadores
-python testes.py           # executa os testes de validação
-```
-
-## 3. Formato dos dados
-
-Os registros são inicializados no código Python (`src/dados.py`). Cada ocorrência é um dicionário:
-
-| Campo | Obrigatório | Regra |
-|---|---|---|
-| `codigo` | sim | `OC` + 3 dígitos (ex.: `OC001`), único |
-| `categoria` | sim | Iluminação, Acessibilidade, Limpeza ou Conservação de Espaços Coletivos |
-| `local_referencia` | sim | local genérico com pelo menos 4 caracteres |
-| `bairro` | sim | texto não vazio |
-| `dia_abertura` | sim | dia simulado, inteiro positivo |
-| `status` | sim | Aberta, Em Análise ou Concluída |
-| `descricao` | não | descrição breve |
-| `rota` | não | rota escolar ou de transporte simulada |
-| `tipo_lampada` | não | LED, Vapor de Sódio ou Vapor Metálico (só para Iluminação) |
-
-**Significado dos status**
-
-- **Aberta:** registrada e ainda não examinada (aguarda na fila de triagem).
-- **Em Análise:** já examinada e em avaliação.
-- **Concluída:** problema tratado e encerrado (simulado).
-
-## 4. Estruturas de dados e justificativa
-
-| Estrutura | Onde | Por que |
-|---|---|---|
-| Lista (`lista_ocorrencias`) | `sistema.py` | guarda todas as ocorrências e permite percorrê-las em listagens e indicadores |
-| Fila (`fila_triagem`) | `sistema.py` | demandas ainda não examinadas, atendidas pela ordem de registro (primeiro a entrar, primeiro a sair) |
-| Pilha (`pilha_historico`) | `sistema.py` | cada mudança de status é empilhada; o evento mais recente é o primeiro a ser consultado |
-| Dicionário (`dict_ocorrencias`) | `sistema.py` | acesso direto a uma ocorrência pelo código, sem percorrer a lista |
-| Hierarquia (`hierarquia_bairro`) | `sistema.py` | bairro → categoria → códigos; mostra rapidamente que tipos de problema cada bairro tem |
-| Matrizes (lista de listas) | `sistema.py`, `indicadores.py` | resumem quantidades: categoria × status (4×3) e tipo de lâmpada × status (3×3) |
-
-## 5. Regras lógicas principais
-
-- **Cadastro:** `inserir_na_estrutura` só aceita o registro se `validar_ocorrencia` retornar verdadeiro e o código ainda não existir. Registros inválidos recebem a mensagem "Registro inválido ou incompleto".
-- **Validação (expressão booleana):**
-  ```python
-  return (codigo_valido and categoria_valida and status_valido
-          and local_valido and bairro_valido and data_valida)
-  ```
-  Todas as condições precisam ser verdadeiras (AND). Se uma falhar, o registro é rejeitado. O registro `OC013`, com categoria vazia, é rejeitado por isso.
-- **Dia válido (AND e NOT):**
-  ```python
-  return isinstance(valor, int) and not isinstance(valor, bool) and valor > 0
-  ```
-  O `not` impede que `True` seja aceito como dia (em Python, `True` é um inteiro).
-- **Filtro (AND e OR):** em `menu.py`, o modo `E` exige que a ocorrência bata em todos os filtros informados; o modo `OU` exige que bata em pelo menos um (`bate_cat or bate_st`).
-- **Atualização de status (IF, ELIF, ELSE):** `atualizar_situacao` rejeita código inexistente, status desconhecido, dia inválido, dia anterior à abertura e status repetido. Se o novo status for Aberta, a ocorrência volta ao fim da fila (`if`); se deixar de estar Aberta, sai da fila (`elif`); nas demais trocas a fila não muda (`else`). Cada mudança válida vira um evento na pilha.
-- **Busca:** por código (dicionário) e filtro por categoria e/ou status, informando claramente quando nada é encontrado.
-
-## 6. Indicadores
-
-| Indicador | Fórmula |
-|---|---|
-| Percentual por categoria e por status | quantidade ÷ total × 100 |
-| Pendentes | total − concluídas (Aberta + Em Análise) |
-| Tempo médio de resolução | soma(`dias_resolucao`) ÷ número de conclusões; `dias_resolucao` = dia da conclusão − dia de abertura |
-| Rotas operacionais | rota operacional = todas as ocorrências da rota concluídas; percentual = rotas operacionais ÷ rotas cadastradas × 100 |
-
-Resultado com os dados iniciais: 12 ocorrências, 3 em cada categoria (25% cada); 2 abertas, 2 em análise e 8 concluídas; 4 pendentes; tempo médio de 5,88 dias simulados (47 ÷ 8); 2 de 4 rotas totalmente operacionais (50%).
-
-**Interpretação:** a maior parte das demandas simuladas foi concluída (66,7%). As pendências ficam em Iluminação (2, ambas em análise) e Conservação de Espaços Coletivos (2, ambas ainda abertas), então essas categorias merecem atenção. Os números vêm de dados fictícios e não provam a situação real de nenhum bairro.
-
-## 7. Exemplo de uso
-
-Cadastro (opção 4):
-```
-Código (ex.: OC014): OC014
-Categoria: 1 Iluminação ...  -> 1
-Local de referência: Poste 10, Rua Nova
-Bairro: Centro Novo
-Dia de abertura: 5
-Ocorrência OC014 registrada com sucesso.
-```
-
-Consulta (opção 2):
-```
-Código da ocorrência: OC005
-Código: OC005
-Categoria: Iluminação
-Local: Poste 04, Av. Central (bairro Vila Esperança)
-Status: Em Análise
-Situação: já examinada, em avaliação.
-```
-
-Alteração de status (opção 5) e histórico (opção 6):
-```
-Status de OC014 atualizado: Aberta -> Em Análise.
-Dia 6: OC014 Aberta -> Em Análise
-```
-
-Saída (opção 0): `Saindo do sistema.`
-
-Registro inválido (carga em `dados.py`): `Registro inválido ou incompleto (OC013).`
-
-## 8. Acessibilidade, inclusão e privacidade
-
-- **Privacidade:** os dados são fictícios; os locais são genéricos (poste, praça, parada) e o sistema não pede nome, endereço de morador, telefone ou qualquer dado pessoal. O cadastro lembra o usuário disso.
-- **Acessibilidade:** a interface é só texto, compatível com leitores de tela, sem depender de cores nem de mouse. As mensagens de erro dizem o que corrigir.
-- **Inclusão:** a categoria Acessibilidade registra barreiras como falta de rampa, piso tátil e espaço para cadeira de rodas, tratando-as como demandas do bairro. As mensagens usam linguagem simples.
-
-## 9. Conclusões, limitações e aprendizados
-
-- O protótipo cadastra, valida, consulta, filtra, atualiza status com histórico e calcula indicadores usando apenas Python básico.
-- Limitações: os dados são simulados e ficam só na memória (somem ao fechar o programa); não há integração com a prefeitura nem promessa de atendimento; o tempo de resolução usa dias simulados; a entrada de dados no terminal é simples.
-- Aprendizados: escolher a estrutura certa para cada finalidade (fila para ordem de chegada, pilha para histórico, dicionário para busca por código) deixa o código mais claro, e testar casos de erro evitou registros inconsistentes.
-
-## 10. Estrutura do repositório
+## Estrutura do projeto
 
 ```
-README.md
-entrega.txt
-testes.py
-src/
-  sistema.py      estruturas, validação, atualização e ponto de entrada
-  menu.py         interface de terminal, buscas e filtros
-  dados.py        dados fictícios e registro inválido
-  indicadores.py  indicadores e matrizes
-docs/
-  uso_ia.md       registro do uso de IA
+📁 GLOBAL-SOLUTION-2
+│
+├── 📁 src
+│   ├── sistema.py       funções principais e início do programa
+│   ├── menu.py          menu, busca e filtros
+│   ├── dados.py         dados fictícios
+│   └── indicadores.py   indicadores e matrizes
+│
+├── 📁 docs
+│   └── uso_ia.md        registro do uso de IA
+│
+├── testes.py            testes automáticos
+└── README.md
 ```
 
-Uso de IA documentado em `docs/uso_ia.md`.
+## Como executar
+
+Com o Python 3 instalado, abra o terminal dentro da pasta do projeto (a que tem o `README.md` e a pasta `src`) e execute:
+
+```
+python src/sistema.py
+```
+
+O menu aparece no terminal e as opções são escolhidas digitando o número. Para rodar os testes:
+
+```
+python testes.py
+```
+
+## Bairro simulado, problema e público
+
+Os dados são inventados e não têm informação pessoal. Criamos quatro bairros imaginários (Jardim Aurora, Vila Esperança, Parque Verde e Centro Novo) com 12 ocorrências de iluminação, acessibilidade, limpeza e conservação de espaços coletivos.
+
+O problema é que os pedidos de melhoria do bairro ficam espalhados, ninguém sabe o que é mais urgente e os moradores não conseguem acompanhar o andamento. O programa organiza esses pedidos em um painel no terminal. Ele ajuda os moradores que registram e acompanham os pedidos e quem organiza a comunidade.
+
+Cada ocorrência tem código, categoria, local, bairro, dia de abertura e status. Todos esses campos são obrigatórios. Os dados iniciais estão no próprio código em Python.
+
+Os status significam:
+
+- **Aberta:** o pedido foi registrado e ainda não foi examinado;
+- **Em Análise:** o pedido já foi visto e está sendo avaliado;
+- **Concluída:** o problema foi resolvido (de forma simulada).
+
+## Estruturas de dados utilizadas
+
+- **Lista:** guarda todas as ocorrências e permite percorrer elas.
+- **Fila:** guarda os pedidos que ainda não foram examinados, porque eles devem ser atendidos na ordem em que chegaram.
+- **Pilha:** guarda o histórico de mudanças de status, porque a mudança mais recente é a que mais interessa consultar.
+- **Dicionário:** acha uma ocorrência rápido pelo código, sem precisar percorrer a lista.
+- **Hierarquia (bairro, categoria e códigos):** mostra que tipos de problema cada bairro tem.
+- **Matriz (lista de listas):** conta quantas ocorrências existem em cada categoria e em cada status.
+
+## Regras lógicas principais
+
+No **cadastro**, o programa só aceita a ocorrência se todos os campos estiverem corretos e se o código ainda não existir. Se algo estiver errado, mostra a mensagem "Registro inválido ou incompleto".
+
+Na **atualização**, o programa recusa código que não existe (mensagem "Ocorrência não encontrada"), status desconhecido (mensagem "Status informado é inválido") e dia inválido (zero, negativo ou anterior ao dia de abertura, com mensagem explicando o motivo). Cada mudança aceita vai para o histórico.
+
+Na **consulta**, dá para buscar pelo código e filtrar por categoria e/ou status. Se o código não existir, aparece "Ocorrência não encontrada". Se o filtro não achar nada, aparece "Nenhuma ocorrência encontrada com esses filtros".
+
+Expressão booleana usada na validação do cadastro:
+
+`codigo_valido and categoria_valida and status_valido and local_valido and bairro_valido and data_valida`
+
+O `and` exige que todas as condições sejam verdadeiras. Se uma falhar, o cadastro é recusado e aparece a mensagem de registro inválido. Foi isso que aconteceu com o registro OC013, que não tem categoria.
+
+O programa também usa `not` (o dia não pode ser verdadeiro ou falso) e `or` (no filtro por categoria ou status, basta combinar com um dos dois).
+
+## Indicadores, fórmulas e interpretação
+
+- **Porcentagem por categoria e por status:** quantidade dividida pelo total, vezes 100.
+- **Pendentes:** total menos as concluídas.
+- **Tempo médio de resolução:** soma dos dias até a conclusão dividida pelo número de ocorrências concluídas.
+- **Porcentagem de rotas resolvidas:** número de rotas com todas as ocorrências concluídas dividido pelo total de rotas, vezes 100.
+
+Resultado com os dados iniciais: 12 ocorrências, 3 em cada categoria (25% cada); 2 abertas, 2 em análise e 8 concluídas (66,7%); 4 pendentes; tempo médio de 5,88 dias simulados (47 dividido por 8); 2 de 4 rotas resolvidas (50%).
+
+**Interpretação:** a maior parte dos pedidos simulados foi resolvida. As pendências estão em Iluminação (2, em análise) e em Conservação de Espaços Coletivos (2, ainda abertas), então essas categorias precisam de mais atenção. Como os dados são inventados, os números não mostram a situação real de nenhum bairro.
+
+## Exemplo de uso
+
+**Cadastro (opção 4 do menu):**
+
+- Código: OC014
+- Categoria: 1 (Iluminação)
+- Local de referência: Poste 10, Rua Nova
+- Bairro: Centro Novo
+- Dia de abertura: 5
+- Resultado: Ocorrência OC014 registrada com sucesso.
+
+**Consulta (opção 2):**
+
+- Código da ocorrência: OC005
+- Categoria: Iluminação
+- Local: Poste 04, Av. Central (bairro Vila Esperança)
+- Status: Em Análise
+
+**Alteração de status (opção 5) e histórico (opção 6):**
+
+- Status de OC014 atualizado: Aberta -> Em Análise.
+- Dia 6: OC014 Aberta -> Em Análise
+
+**Saída (opção 0):**
+
+- Saindo do sistema.
+
+## Acessibilidade, inclusão e privacidade
+
+- Os dados são inventados e os locais são genéricos (poste, praça, parada). O programa não pede nome, telefone nem endereço de morador.
+- A interface usa só texto, sem depender de cores ou de mouse, o que ajuda no uso com leitores de tela. As mensagens de erro explicam o que precisa ser corrigido.
+- A categoria Acessibilidade registra problemas como falta de rampa, piso tátil e espaço para cadeira de rodas. A linguagem do programa é simples.
+
+## Conclusões, limitações e aprendizados
+
+O programa cadastra, valida, consulta, filtra, muda o status com histórico e calcula indicadores, usando só Python básico.
+
+Como limitações, os dados são inventados e somem quando o programa fecha, não existe ligação com a prefeitura, os dias são simulados e a entrada é só por digitação no terminal.
+
+Aprendemos que cada estrutura de dados serve para um fim (fila para ordem de chegada, pilha para histórico, dicionário para busca por código) e que testar os casos de erro evitou registros errados.
+
+## Uso de IA
+
+O uso de IA está registrado em [docs/uso_ia.md](docs/uso_ia.md).
